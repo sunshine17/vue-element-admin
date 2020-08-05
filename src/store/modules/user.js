@@ -76,7 +76,8 @@ const actions = {
         commit('SET_IS_ADMIN', isAdmin)
         commit('SET_INITIATED', true)
 
-        // commit('SET_AVATAR', avatar)
+        const avatar = 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
+        commit('SET_AVATAR', avatar)
         // commit('SET_INTRODUCTION', introduction)
         resolve(data)
       }).catch(error => {

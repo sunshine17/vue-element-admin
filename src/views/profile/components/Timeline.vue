@@ -17,24 +17,24 @@ export default {
     return {
       timeline: [
         {
-          timestamp: '2019/4/20',
-          title: 'Update Github template',
-          content: 'PanJiaChen committed 2019/4/20 20:46'
+          timestamp: '2020/08/06',
+          title: 'Initialized.',
+          content: '1. Auto detect environment(API mode or front-end dev mode) is ok. 2. Login and some pages is ok.'
         },
         {
-          timestamp: '2019/4/21',
-          title: 'Update Github template',
-          content: 'PanJiaChen committed 2019/4/21 20:46'
+          timestamp: '2020/08/01',
+          title: 'adjust env',
+          content: 'adjust env'
         },
         {
-          timestamp: '2019/4/22',
-          title: 'Build Template',
-          content: 'PanJiaChen committed 2019/4/22 20:46'
+          timestamp: '2020/07/20',
+          title: 'Add Getting Started doc.',
+          content: 'Add Getting Started doc.'
         },
         {
-          timestamp: '2019/4/23',
-          title: 'Release New Version',
-          content: 'PanJiaChen committed 2019/4/23 20:46'
+          timestamp: '2020/07/15',
+          title: 'Start project',
+          content: 'Start project'
         }
       ]
     }
