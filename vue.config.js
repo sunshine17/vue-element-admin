@@ -15,6 +15,32 @@ const name = defaultSettings.title || 'vue Element Admin' // page title
 // port = 9527 npm run dev OR npm run dev --port = 9527
 const port = process.env.port || process.env.npm_config_port || 9527 // dev port
 
+const devServerConf = {
+  disableHostCheck: true,
+  port: port,
+  open: true,
+  overlay: {
+    warnings: false,
+    errors: true
+  }
+}
+
+if (process.env.host) {
+  devServerConf.public = process.env.host
+  devServerConf.sockHost = process.env.host
+}
+
+if (process.env.API_MODE && process.env.API_SERVER) {
+  devServerConf.proxy = {
+    '/api': {
+      target: process.env.API_SERVER,
+      secure: false
+    }
+  }
+} else {
+  devServerConf.before = require('./mock/mock-server.js')
+}
+
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
   /**
@@ -29,16 +55,7 @@ module.exports = {
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
-  devServer: {
-    disableHostCheck: true,
-    port: port,
-    open: true,
-    overlay: {
-      warnings: false,
-      errors: true
-    },
-    before: require('./mock/mock-server.js')
-  },
+  devServer: devServerConf,
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.

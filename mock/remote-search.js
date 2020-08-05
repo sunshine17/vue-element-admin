@@ -13,7 +13,7 @@ NameList.push({ name: 'mock-Pan' })
 module.exports = [
   // username search
   {
-    url: '/vue-element-admin/search/user',
+    url: '/search/user',
     type: 'get',
     response: config => {
       const { name } = config.query
@@ -22,7 +22,7 @@ module.exports = [
         return !(name && lowerCaseName.indexOf(name.toLowerCase()) < 0)
       })
       return {
-        code: 20000,
+        code: 0,
         data: { items: mockNameList }
       }
     }
@@ -30,11 +30,11 @@ module.exports = [
 
   // transaction list
   {
-    url: '/vue-element-admin/transaction/list',
+    url: '/transaction/list',
     type: 'get',
     response: _ => {
       return {
-        code: 20000,
+        code: 0,
         data: {
           total: 20,
           'items|20': [{

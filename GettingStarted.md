@@ -1,5 +1,10 @@
 ## Environment settings
 
+Environment files:
+
+- .env.development
+- .env.production
+
 
 ### VUE_APP_BASE_API
 
@@ -9,21 +14,10 @@ VUE_APP_BASE_API=http://yourdomain/api/
 
 ## API Server things
 
-### Remove client mock 
-In ./vue.config.js, comment the "before" attribute in "devServer" section:
+### Disable client-side dev mode
+API_MODE=1
+API_SERVER='http://localhost:9099'  // your api back-end server
 
-```
-  devServer: {
-    disableHostCheck: true,
-    port: port,
-    open: true,
-    overlay: {
-      warnings: false,
-      errors: true
-    },
-    before: require('./mock/mock-server.js')  // COMMENT THIS LINE TO DISABLE API MOCK
-  },
-```
 
 ### Auth setting
 
@@ -36,7 +30,7 @@ In ./vue.config.js, comment the "before" attribute in "devServer" section:
 
 ```
 {
-    code: 20000,  // 20000 for success
+    code: 0,  // 0 for success
     message: 'error message'
     data: {}  // business data object if no error happens
 }
@@ -45,7 +39,7 @@ In ./vue.config.js, comment the "before" attribute in "devServer" section:
 
 ### API: status code definition
 
-- 20000: everythings' fine;
+- 0: everythings' fine;
 
 - 5xxxx: logic error;
   - 50008: Illegal token; 
@@ -71,10 +65,4 @@ User Info object:
     avatar: 'img url',
 }
 ```
-
-
-
-
-
-
 

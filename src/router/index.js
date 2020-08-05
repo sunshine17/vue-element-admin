@@ -138,7 +138,7 @@ export const asyncRoutes = [
     meta: {
       title: 'permission',
       icon: 'lock',
-      roles: ['admin', 'editor'] // you can set roles in root nav
+      res: ['role/add', 'role/update', 'role/del', 'user/add']
     },
     children: [
       {
@@ -146,8 +146,7 @@ export const asyncRoutes = [
         component: () => import('@/views/permission/page'),
         name: 'PagePermission',
         meta: {
-          title: 'pagePermission',
-          roles: ['admin'] // or you can only set roles in sub nav
+          title: 'pagePermission'
         }
       },
       {
@@ -164,8 +163,7 @@ export const asyncRoutes = [
         component: () => import('@/views/permission/role'),
         name: 'RolePermission',
         meta: {
-          title: 'rolePermission',
-          roles: ['admin']
+          title: 'rolePermission'
         }
       }
     ]
@@ -204,7 +202,7 @@ export const asyncRoutes = [
         path: 'create',
         component: () => import('@/views/example/create'),
         name: 'CreateArticle',
-        meta: { title: 'createArticle', icon: 'edit' }
+        meta: { title: 'createArticle', icon: 'edit', res: ['artical/add', 'artical/update'] }
       },
       {
         path: 'edit/:id(\\d+)',

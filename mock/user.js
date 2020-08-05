@@ -1,22 +1,33 @@
 
 const tokens = {
-  admin: {
+  'admin@admin.com': {
     token: 'admin-token'
   },
-  editor: {
+  'a@a.com': {
     token: 'editor-token'
   }
 }
 
 const users = {
   'admin-token': {
-    roles: ['admin'],
+    isAdmin: true,
+    authArr: [
+      'role/list',
+      'role/add',
+      'role/update',
+      'role/del',
+      'user/list'
+    ],
     introduction: 'I am a super administrator',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
     name: 'Super Admin'
   },
   'editor-token': {
-    roles: ['editor'],
+    authArr: [
+      'role/list',
+      'role/add',
+      'role/update'
+    ],
     introduction: 'I am an editor',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
     name: 'Normal Editor'
@@ -26,7 +37,7 @@ const users = {
 module.exports = [
   // user login
   {
-    url: '/vue-element-admin/auth/login',
+    url: '/auth/login',
     type: 'post',
     response: config => {
       const { username } = config.body
@@ -41,7 +52,7 @@ module.exports = [
       }
 
       return {
-        code: 20000,
+        code: 0,
         data: token
       }
     }
@@ -49,7 +60,7 @@ module.exports = [
 
   // get user info
   {
-    url: '/vue-element-admin/auth/info\.*',
+    url: '/auth/info\.*',
     type: 'get',
     response: config => {
       const { token } = config.query
@@ -64,7 +75,7 @@ module.exports = [
       }
 
       return {
-        code: 20000,
+        code: 0,
         data: info
       }
     }
@@ -72,11 +83,11 @@ module.exports = [
 
   // user logout
   {
-    url: '/vue-element-admin/auth/logout',
+    url: '/auth/logout',
     type: 'post',
     response: _ => {
       return {
-        code: 20000,
+        code: 0,
         data: 'success'
       }
     }

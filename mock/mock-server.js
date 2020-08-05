@@ -43,53 +43,6 @@ const responseFake = (url, type, respond) => {
   }
 }
 
-// if (process.env.API_MODE !== '1') {
-//
-//
-let expFunc = app => {
-  // parse app.body
-  // https://expressjs.com/en/4x/api.html#req.body
-  app.use(bodyParser.json())
-  app.use(bodyParser.urlencoded({
-    extended: true
-  }))
-
-  const mockRoutes = registerRoutes(app)
-  var mockRoutesLength = mockRoutes.mockRoutesLength
-  var mockStartIndex = mockRoutes.mockStartIndex
-
-  // watch files, hot reload mock server
-  chokidar.watch(mockDir, {
-    ignored: /mock-server/,
-    ignoreInitial: true
-  }).on('all', (event, path) => {
-    if (event === 'change' || event === 'add') {
-      try {
-        // remove mock routes stack
-        app._router.stack.splice(mockStartIndex, mockRoutesLength)
-
-        // clear routes cache
-        unregisterRoutes()
-
-        const mockRoutes = registerRoutes(app)
-        mockRoutesLength = mockRoutes.mockRoutesLength
-        mockStartIndex = mockRoutes.mockStartIndex
-
-        console.log(chalk.magentaBright(`\n > Mock Server hot reload success! changed  ${path}`))
-      } catch (error) {
-        console.log(chalk.redBright(error))
-      }
-    }
-  })
-}
-
-if (process.env.API_MODE === '1') {
-  expFunc = 1
-}
-
-module.exports = expFunc
-
-/**
 module.exports = app => {
   // parse app.body
   // https://expressjs.com/en/4x/api.html#req.body
@@ -126,4 +79,3 @@ module.exports = app => {
     }
   })
 }
-*/
