@@ -1,5 +1,10 @@
 export default {
   route: {
+    company: 'Company',
+    CompanyList: 'Company List',
+    user: 'User',
+    UserList: 'User List',
+
     dashboard: 'Dashboard',
     documentation: 'Documentation',
     guide: 'Guide',

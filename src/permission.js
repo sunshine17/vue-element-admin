@@ -43,10 +43,13 @@ router.beforeEach(async(to, from, next) => {
     return next()
   }
   try { // Initiate authArr and async routes
-    const { authArr, isAdmin } = await store.dispatch('user/getInfo')
+    // const { authArr, isAdmin } = await store.dispatch('user/getInfo')
+    const userInfo = await store.dispatch('user/getInfo')
+    // console.log('===> isAdmin: ' + isAdmin)
 
     // generate accessible routes map based on authArr
-    const accessRoutes = await store.dispatch('permission/generateRoutes', authArr, isAdmin)
+    // const accessRoutes = await store.dispatch('permission/generateRoutes', { authArr: authArr, isAdmin: isAdmin })
+    const accessRoutes = await store.dispatch('permission/generateRoutes', userInfo)
 
     // dynamically add accessible routes
     router.addRoutes(accessRoutes)

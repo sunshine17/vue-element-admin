@@ -1,10 +1,11 @@
 /** When your routing table is too long, you can split it into small modules**/
 
-import Layout from '@/layout'
+// import Layout from '@/layout'
 
 const chartsRouter = {
   path: '/charts',
-  component: Layout,
+  // component: Layout,
+  component: () => import('@/views/nested/default'), // Parent router-view
   redirect: 'noRedirect',
   name: 'Charts',
   meta: {
