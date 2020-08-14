@@ -42,7 +42,7 @@ export default [{
     path: 'dashboard',
     component: () => import('@/views/dashboard/index'),
     name: 'Dashboard',
-    meta: { title: 'dashboard', icon: 'dashboard', affix: false }
+    meta: { title: 'dashboard', icon: 'dashboard' } //, affix: false }
   }]
 }, {
   path: '/guide',
