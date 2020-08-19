@@ -5,6 +5,10 @@ export default {
     name: '用户名'
   },
   route: {
+    userDetail: '用户详情',
+    user: '用户模块',
+    UserList: '用户列表',
+
     dashboard: '首页',
     documentation: '文档',
     guide: '引导页',

@@ -20,13 +20,14 @@ export default [
       path: 'list',
       component: () => import('@/views/user/list'),
       name: 'userList',
-      meta: { title: 'User List' }
-      /**
+      meta: { title: 'UserList' }
     }, {
-      path: 'update',
-      component: () => import('@/views/user/update'),
-      name: 'userUpdate',
-      meta: { title: 'userUpdate' }
+      path: 'detail/:id(\\d+)',
+      hidden: true,
+      component: () => import('@/views/user/detail'),
+      name: 'userDetail',
+      meta: { title: 'userDetail' }
+      /**
     }, {
       path: 'role',
       component: () => import('@/views/user/role'),

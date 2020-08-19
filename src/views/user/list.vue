@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" :placeholder="$t('table.title')" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.name" :placeholder="$t('user.name')" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
 
       <el-select v-model="listQuery.enabled" :placeholder="$t('table.status')" clearable class="filter-item" style="width: 130px">
         <el-option v-for="item in statusOpts" :key="item.key" :label="item.display_name" :value="item.key" />
@@ -18,14 +18,6 @@
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         {{ $t('table.add') }}
       </el-button>
-
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
-        {{ $t('table.export') }}
-      </el-button>
-
-      <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
-        {{ $t('table.reviewer') }}
-      </el-checkbox>
     </div>
 
     <el-table
@@ -41,18 +33,20 @@
       <el-table-column :label="$t('table.id')" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
         <template slot-scope="{row}"> <span>{{ row.id }}</span> </template>
       </el-table-column>
-      <el-table-column :label="$t('user.name')">
+
+      <el-table-column :label="$t('user.name')" align="center">
         <template slot-scope="{row}">
           <span class="link-type" @click="handleUpdate(row)">{{ row.name }}</span>
         </template>
       </el-table-column>
+
       <el-table-column :label="$t('user.email')" align="center">
         <template slot-scope="{row}">
           <span>{{ row.email }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('user.roles')">
+      <el-table-column :label="$t('user.roles')" align="center">
         <template slot-scope="{row}">
           <span v-for="role in row.roles" :key="role.id">{{ role.name }}</span>
         </template>
@@ -74,8 +68,10 @@
 
       <el-table-column :label="$t('table.actions')" align="center" width="250" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            {{ $t('table.detail') }}
+          <el-button type="primary" size="mini" icon="el-icon-info">
+            <router-link :to="'/user/detail/'+row.id">
+              {{ $t('table.detail') }}
+            </router-link>
           </el-button>
           <el-button v-if="row.enabled!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
             {{ $t('table.publish') }}
@@ -85,16 +81,6 @@
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
-
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">{{ $t('table.confirm') }}</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
@@ -122,10 +108,7 @@ export default {
       return statusOptArr[opt]
     },
     statusFilter(status) {
-      const statusMap = {
-        '1': 'success',
-        '0': 'info'
-      }
+      const statusMap = { '1': 'success', '0': 'info' }
       return statusMap[status]
     }
   },
@@ -138,39 +121,19 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        importance: undefined,
-        title: undefined,
-        type: undefined,
+        name: undefined,
+        email: undefined,
         sort: '+id'
       },
-      importanceOptions: [1, 2, 3],
       statusOpts,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: [0, 1],
-      showReviewer: false,
       temp: {
         id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        type: '',
-        status: 'published'
-      },
-      dialogFormVisible: false,
-      dialogStatus: '',
-      textMap: {
-        update: 'Edit',
-        create: 'Create'
-      },
-      dialogPvVisible: false,
-      pvData: [],
-      rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
-      },
-      downloadLoading: false
+        enabled: 1,
+        createdAt: new Date(),
+        name: '',
+        email: ''
+      }
     }
   },
   created() {
@@ -217,12 +180,10 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: ''
+        enabled: 1,
+        createdAt: new Date(),
+        name: '',
+        email: ''
       }
     },
     handleCreate() {
@@ -287,20 +248,6 @@ export default {
         duration: 2000
       })
       this.list.splice(index, 1)
-    },
-    handleDownload() {
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
-        const data = this.formatJson(filterVal)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
     },
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {
