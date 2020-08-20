@@ -48,9 +48,9 @@ service.interceptors.response.use(
     // if the custom code is not 0, it is judged as an error.
     if (res.code !== 0) {
       Message({
-        message: res.msg || 'Error',
+        message: '操作失败: ' + (res.msg || 'Error'),
         type: 'error',
-        duration: 5 * 1000
+        duration: 2000
       })
 
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;

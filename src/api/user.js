@@ -31,3 +31,11 @@ export function update(data) {
     data
   })
 }
+
+export function del(data) {
+  return request({
+    url: '/api/user/del',
+    method: 'post',
+    data
+  })
+}

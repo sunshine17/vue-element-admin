@@ -22,11 +22,17 @@ export default [
       name: 'userList',
       meta: { title: 'UserList' }
     }, {
+      path: 'create',
+      hidden: true,
+      component: () => import('@/views/user/detail'),
+      name: 'userCreate',
+      meta: { title: 'userCreate', module: '用户' }
+    }, {
       path: 'detail/:id(\\d+)',
       hidden: true,
       component: () => import('@/views/user/detail'),
       name: 'userDetail',
-      meta: { title: 'userDetail' }
+      meta: { title: 'userDetail', module: '用户' }
       /**
     }, {
       path: 'role',

@@ -37,6 +37,31 @@
               </el-form-item>
             </el-col>
           </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item prop="roles" class="form-items" label="所属角色">
+                <!--
+                <el-input v-model="postForm.roles" :maxlength="80" name="roles" required :disabled="isReadonly" />
+                -->
+                <el-select v-model="postForm.roles" multiple placeholder="搜索角色">
+                  <!--
+                  <el-option v-for="(item) in roleListOptions" :key="item.id" :label="item.name" :value="item.id" />
+                  -->
+                  <el-option
+                    v-for="item in roleListOptions"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item prop="mobile" class="form-items" label="手机号">
+                <el-input v-model="postForm.mobile" :maxlength="80" name="mobile" required :disabled="isReadonly" />
+              </el-form-item>
+            </el-col>
+          </el-row>
         </div>
       </div>
     </el-form>
@@ -48,7 +73,7 @@
 import Sticky from '@/components/Sticky' // 粘性header组件
 
 // import { getOne, addOne, update } from '@/api/user'
-import { getOne } from '@/api/user'
+import { getOne, update } from '@/api/user'
 
 const defaultForm = {
   passwd: '',
@@ -67,6 +92,7 @@ export default {
   // components: { MDinput, Sticky },
   components: { Sticky },
   props: { },
+
   data() {
     const validateRequire = (rule, value, callback) => {
       if (value === '') {
@@ -80,8 +106,9 @@ export default {
       }
     }
     return {
+      roleListOptions: [],
+      id: undefined,
       readonly: true,
-      pageName: '用户详情',
       postForm: Object.assign({}, defaultForm),
       loading: false,
       rules: {
@@ -92,6 +119,14 @@ export default {
     }
   },
   computed: {
+    pageName() {
+      let name = this.$route.meta.module + '详情'
+      if (this.id) {
+        name += ` - ${this.id}`
+      }
+      return name
+    },
+
     isReadonly() {
       return this.readonly
     },
@@ -106,7 +141,8 @@ export default {
   created() {
     const id = this.$route.params && this.$route.params.id
     if (id) {
-      this.fetchData(id)
+      this.id = id
+      this.fetchData()
     }
 
     // Why need to make a copy of this.$route here?
@@ -116,12 +152,30 @@ export default {
   }, // created()
 
   methods: {
-    fetchData(id) {
-      getOne(id).then(response => {
+    loadRoleLst() {
+    }, // loadRoleLst()
+
+    toast(succ, msg = '未知错误') {
+      const name = succ ? '成功' : '出错'
+      this.$notify({
+        name: name,
+        message: succ ? '保存成功' : `保存失败：${msg}`,
+        type: succ ? 'success' : 'error',
+        duration: 1000
+      })
+    },
+
+    fetchData() {
+      if (!this.id) {
+        return
+      }
+      this.loading = true
+      getOne(this.id).then(response => {
         this.postForm = response.data
-        this.pageName += ` - ${id}`
       }).catch(err => {
         console.log(err)
+      }).finally(() => {
+        this.loading = false
       })
     }, // fetchData()
 
@@ -134,22 +188,25 @@ export default {
     },
 
     onSave() {
-      console.log(this.postForm)
       this.$refs.postForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$notify({
-            name: '成功',
-            message: '保存成功',
-            type: 'success',
-            duration: 2000
-          })
-          this.postForm.status = 'saved'
-          this.loading = false
-        } else {
+        if (!valid) {
           console.log('error submit!!')
           return false
         }
+        this.loading = true
+        const form = { ...this.postForm }
+        const roleArr = []
+        form.roles.forEach(elem => roleArr.push(elem.id))
+        form.roles = roleArr
+        update(form).then(res => {
+          this.toast(true, res.msg)
+          this.readonly = true
+          this.fetchData()
+        }).catch(() => {
+          this.readonly = false
+        }).finally(() => {
+          this.loading = false
+        })
       })
     } // onSave()
   } // methods()

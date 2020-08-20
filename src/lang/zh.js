@@ -6,6 +6,7 @@ export default {
   },
   route: {
     userDetail: '用户详情',
+    userCreate: '添加用户',
     user: '用户模块',
     UserList: '用户列表',
 

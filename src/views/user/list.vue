@@ -1,23 +1,27 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" :placeholder="$t('user.name')" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-row>
+        <el-col :span="18" align="left" class="small-padding">
+          <el-input v-model="listQuery.name" :placeholder="$t('user.name')" style="width: 180px;" class="filter-item" @keyup.enter.native="handleFilter" />
+            &nbsp;
+          <el-select v-model="listQuery.enabled" :placeholder="$t('table.status')" clearable class="filter-item" style="width: 130px">
+            <el-option v-for="item in statusOpts" :key="item.key" :label="item.display_name" :value="item.key" />
+          </el-select>
+            &nbsp;
+          <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
+            <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
+          </el-select>
 
-      <el-select v-model="listQuery.enabled" :placeholder="$t('table.status')" clearable class="filter-item" style="width: 130px">
-        <el-option v-for="item in statusOpts" :key="item.key" :label="item.display_name" :value="item.key" />
-      </el-select>
+          <el-button style="margin-left:10px; padding-bottom:10px" icon="el-icon-search" circle @click="handleFilter" />
+        </el-col>
 
-      <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
-        <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
-      </el-select>
-
-      <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleFilter">
-        {{ $t('table.search') }}
-      </el-button>
-
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        {{ $t('table.add') }}
-      </el-button>
+        <el-col :span="6" align="right" class="small-padding">
+          <el-button class="pan-btn light-blue-btn" style="margin-left: 10px;" type="primary" size="small">
+            {{ $t('table.add') }}
+          </el-button>
+        </el-col>
+      </el-row>
     </div>
 
     <el-table
@@ -36,7 +40,7 @@
 
       <el-table-column :label="$t('user.name')" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.name }}</span>
+          <span class="link-type">{{ row.name }}</span>
         </template>
       </el-table-column>
 
@@ -48,7 +52,9 @@
 
       <el-table-column :label="$t('user.roles')" align="center">
         <template slot-scope="{row}">
-          <span v-for="role in row.roles" :key="role.id">{{ role.name }}</span>
+          <el-tag v-for="role in row.roles" :key="role.id" type="success">
+            {{ role.name }}
+          </el-tag>
         </template>
       </el-table-column>
 
@@ -68,26 +74,20 @@
 
       <el-table-column :label="$t('table.actions')" align="center" width="250" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button type="primary" size="mini" icon="el-icon-info">
-            <router-link :to="'/user/detail/'+row.id">
-              {{ $t('table.detail') }}
-            </router-link>
-          </el-button>
-          <el-button v-if="row.enabled!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
-            {{ $t('table.publish') }}
-          </el-button>
+          <router-link :to="'/user/detail/'+row.id">
+            <el-button type="info" icon="el-icon-edit" circle />
+          </router-link> &nbsp; &nbsp;
+          <el-button type="danger" icon="el-icon-delete" circle @click="onDel(row.id)" />
         </template>
       </el-table-column>
     </el-table>
-
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
   </div>
 </template>
 
 <script>
-import { getLst, addOne, update } from '@/api/user'
+import { getLst, del } from '@/api/user'
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 const statusOpts = [
@@ -120,7 +120,7 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20,
+        limit: 10,
         name: undefined,
         email: undefined,
         sort: '+id'
@@ -156,13 +156,6 @@ export default {
       this.listQuery.page = 1
       this.getList()
     },
-    handleModifyStatus(row, status) {
-      this.$message({
-        message: '操作成功',
-        type: 'success'
-      })
-      row.status = status
-    },
     sortChange(data) {
       const { prop, order } = data
       if (prop === 'id') {
@@ -185,79 +178,30 @@ export default {
         name: '',
         email: ''
       }
-    },
-    handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    createData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
-          addOne(this.temp).then(() => {
-            this.list.unshift(this.temp)
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '成功',
-              message: '创建成功',
-              type: 'success',
-              duration: 2000
-            })
+    }, // resetTemp()
+
+    onDel(id) {
+      console.log(id)
+      this.$confirm('确定要删除？', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        del(id).then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功'
           })
-        }
+        }).catch(() => {
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '放弃删除'
+        })
       })
-    },
-    handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    updateData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          update(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, this.temp)
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '成功',
-              message: '更新成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
-    },
-    handleDelete(row, index) {
-      this.$notify({
-        title: '成功',
-        message: '删除成功',
-        type: 'success',
-        duration: 2000
-      })
-      this.list.splice(index, 1)
-    },
-    formatJson(filterVal) {
-      return this.list.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
-          return parseTime(v[j])
-        } else {
-          return v[j]
-        }
-      }))
-    },
+    }, // onDel()
+
     getSortClass: function(key) {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'

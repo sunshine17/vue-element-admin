@@ -3,6 +3,26 @@ const Mock = require('mockjs')
 const uLst = []
 const count = 100
 
+function genRoles() {
+  const rCnt = Mock.mock('@integer(1,3)')
+  const ret = []
+  for (let i = 0; i <= rCnt; i++) {
+    ret.push(Mock.mock({
+      'id': '@integer(1, 100)',
+      'name': '@cword(2)'
+    }))
+  }
+  return ret
+} // genRoles()
+
+function genWriteRes() {
+  return Mock.mock({
+    'code|0-1': 1,
+    'msg': '@csentence(6,10)',
+    'data': ''
+  })
+} // genWriteRes()
+
 for (let i = 0; i < count; i++) {
   uLst.push(Mock.mock({
     id: '@increment',
@@ -11,16 +31,8 @@ for (let i = 0; i < count; i++) {
     enabled: '@integer(0, 1)',
     passwd: '@string(8, 12)',
     createdAt: '@datetime',
-    roles: [
-      {
-        'createdAt': 1596021817262,
-        'updatedAt': 1596451594975,
-        'id': 2,
-        'name': 'T1',
-        'desc': 'T1'
-      }
-    ],
-    mobile: '13323445343',
+    roles: genRoles(),
+    mobile: '137@natural(23445343)',
     channel: 0
   }))
 }
@@ -50,7 +62,7 @@ module.exports = [{
       data: { total: mockList.length, items: pageList }
     }
   }
-},{
+}, {
   url: '/api/user/detail',
   type: 'get',
   response: config => {
@@ -61,7 +73,7 @@ module.exports = [{
       }
     }
   }
-},{
+}, {
   url: '/api/user/create',
   type: 'post',
   response: _ => {
@@ -70,14 +82,17 @@ module.exports = [{
       data: 'success'
     }
   }
-},{
+}, {
+  url: '/api/user/del',
+  type: 'post',
+  response: _ => {
+    return genWriteRes()
+  }
+}, {
   url: '/api/user/update',
   type: 'post',
   response: _ => {
-    return {
-      code: 0,
-      data: 'success'
-    }
+    return genWriteRes()
   }
 }]
 
