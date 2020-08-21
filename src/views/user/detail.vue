@@ -52,7 +52,14 @@
             </el-col>
             <el-col :span="12">
               <el-form-item prop="enabled" class="form-items" label="状态">
-                <el-input v-model="postForm.enabled" :maxlength="80" name="enabled" required :disabled="isReadonly" />
+                <el-switch
+                  v-model="postForm.enabled"
+                  active-value="1"
+                  inactive-value="0"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  :disabled="isReadonly"
+                />
               </el-form-item>
             </el-col>
           </el-row>
@@ -87,6 +94,14 @@ export default {
   name: 'ArticleDetail',
   // components: { MDinput, Sticky },
   components: { Sticky },
+
+  filters: {
+
+    enabledFilter(status) {
+      const statusMap = { 1: true, 0: false }
+      return statusMap[status]
+    }
+  },
   props: { },
 
   data() {
@@ -168,6 +183,7 @@ export default {
       getOne(this.id).then(response => {
         this.postForm = response.data
         this.postForm.roles = this.postForm.roles.map(x => x.id)
+        console.log(JSON.stringify(this.postForm))
       }).catch(err => {
         console.log(err)
       }).finally(() => {
