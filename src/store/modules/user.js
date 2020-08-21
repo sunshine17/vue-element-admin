@@ -4,6 +4,7 @@ import { getToken, setToken, removeToken } from '@/utils/auth'
 import { hex_md5 } from '@/utils/md5'
 
 const state = {
+  usr: undefined,
   initiated: false,
   isAdmin: false,
   token: getToken(),
@@ -14,6 +15,11 @@ const state = {
 }
 
 const mutations = {
+
+  SET_USR: (state, usr) => {
+    state.usr = usr
+  },
+
   SET_INITIATED: (state, isDone) => {
     state.initiated = isDone
   },
@@ -72,6 +78,8 @@ const actions = {
         } else {
           commit('SET_AUTH_ARR', authArr)
         }
+
+        commit('SET_USR', data)
         commit('SET_NAME', name)
         commit('SET_IS_ADMIN', isAdmin)
         commit('SET_INITIATED', true)

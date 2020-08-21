@@ -40,15 +40,9 @@
           <el-row>
             <el-col :span="12">
               <el-form-item prop="roles" class="form-items" label="所属角色">
-                <!--
-                <el-input v-model="postForm.roles" :maxlength="80" name="roles" required :disabled="isReadonly" />
-                -->
-                <el-select v-model="postForm.roles" multiple placeholder="搜索角色">
-                  <!--
-                  <el-option v-for="(item) in roleListOptions" :key="item.id" :label="item.name" :value="item.id" />
-                  -->
+                <el-select v-model="postForm.roles" multiple>
                   <el-option
-                    v-for="item in roleListOptions"
+                    v-for="(item) in roleOpts"
                     :key="item.id"
                     :label="item.name"
                     :value="item.id"
@@ -57,8 +51,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item prop="mobile" class="form-items" label="手机号">
-                <el-input v-model="postForm.mobile" :maxlength="80" name="mobile" required :disabled="isReadonly" />
+              <el-form-item prop="enabled" class="form-items" label="状态">
+                <el-input v-model="postForm.enabled" :maxlength="80" name="enabled" required :disabled="isReadonly" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -74,6 +68,8 @@ import Sticky from '@/components/Sticky' // 粘性header组件
 
 // import { getOne, addOne, update } from '@/api/user'
 import { getOne, update } from '@/api/user'
+
+import store from '@/store'
 
 const defaultForm = {
   passwd: '',
@@ -106,7 +102,7 @@ export default {
       }
     }
     return {
-      roleListOptions: [],
+      roleOpts: store.getters.usr.roleToSel,
       id: undefined,
       readonly: true,
       postForm: Object.assign({}, defaultForm),
@@ -144,7 +140,6 @@ export default {
       this.id = id
       this.fetchData()
     }
-
     // Why need to make a copy of this.$route here?
     // Because if you enter this page and quickly switch tag, may be in the execution of the setTagsViewname function, this.$route is no longer pointing to the current page
     // https://github.com/PanJiaChen/vue-element-admin/issues/1221
@@ -172,6 +167,7 @@ export default {
       this.loading = true
       getOne(this.id).then(response => {
         this.postForm = response.data
+        this.postForm.roles = this.postForm.roles.map(x => x.id)
       }).catch(err => {
         console.log(err)
       }).finally(() => {

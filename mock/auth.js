@@ -1,3 +1,5 @@
+// const Mock = require('mockjs')
+const mockRoles = require('./roles')
 
 const tokens = {
   'admin@admin.com': {
@@ -11,6 +13,7 @@ const tokens = {
 const users = {
   'admin-token': {
     isAdmin: true,
+    roleToSel: mockRoles.total(), // used in role selection component
     authArr: [
       'role/list',
       'role/add',
@@ -23,6 +26,7 @@ const users = {
     name: 'Super Admin'
   },
   'editor-token': {
+    roleToSel: mockRoles.getSome(), // used in role selection component
     authArr: [
       'role/list',
       'role/add',

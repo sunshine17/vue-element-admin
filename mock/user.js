@@ -1,19 +1,8 @@
 const Mock = require('mockjs')
+const mockRoles = require('./roles')
 
 const uLst = []
 const count = 100
-
-function genRoles() {
-  const rCnt = Mock.mock('@integer(1,3)')
-  const ret = []
-  for (let i = 0; i <= rCnt; i++) {
-    ret.push(Mock.mock({
-      'id': '@integer(1, 100)',
-      'name': '@cword(2)'
-    }))
-  }
-  return ret
-} // genRoles()
 
 function genWriteRes() {
   return Mock.mock({
@@ -31,8 +20,8 @@ for (let i = 0; i < count; i++) {
     enabled: '@integer(0, 1)',
     passwd: '@string(8, 12)',
     createdAt: '@datetime',
-    roles: genRoles(),
-    mobile: '137@natural(23445343)',
+    roles: mockRoles.getSome(),
+    mobile: '137@natural(445343)',
     channel: 0
   }))
 }
