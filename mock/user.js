@@ -63,12 +63,15 @@ module.exports = [{
     }
   }
 }, {
-  url: '/api/user/create',
+  url: '/api/user/add',
   type: 'post',
   response: _ => {
     return {
       code: 0,
-      data: 'success'
+      data: {
+        id: 343535,
+        name: 'mock name'
+      }
     }
   }
 }, {

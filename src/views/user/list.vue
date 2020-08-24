@@ -17,9 +17,11 @@
         </el-col>
 
         <el-col :span="6" align="right" class="small-padding">
-          <el-button class="pan-btn light-blue-btn" style="margin-left: 10px;" type="primary" size="small">
-            {{ $t('table.add') }}
-          </el-button>
+          <router-link :to="'/user/create'">
+            <el-button class="pan-btn-min light-blue-btn" style="margin-left: 10px;" type="primary" size="small">
+              {{ $t('table.add') }}
+            </el-button>
+          </router-link>
         </el-col>
       </el-row>
     </div>
@@ -38,7 +40,7 @@
         <template slot-scope="{row}"> <span>{{ row.id }}</span> </template>
       </el-table-column>
 
-      <el-table-column :label="$t('user.name')" align="center">
+      <el-table-column :label="$t('user.name')" width="120" align="center">
         <template slot-scope="{row}">
           <span class="link-type">{{ row.name }}</span>
         </template>
@@ -64,7 +66,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('table.status')" class-name="status-col">
+      <el-table-column :label="$t('table.status')" width="80" class-name="status-col">
         <template slot-scope="{row}">
           <el-tag :type="row.enabled | statusFilter">
             {{ row.enabled | enabledFilter }}
@@ -72,7 +74,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('table.actions')" align="center" width="250" class-name="small-padding fixed-width">
+      <el-table-column :label="$t('table.actions')" align="center" width="100" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <router-link :to="'/user/detail/'+row.id">
             <el-button type="info" icon="el-icon-edit" circle />

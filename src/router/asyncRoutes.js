@@ -26,7 +26,7 @@ export default [
       hidden: true,
       component: () => import('@/views/user/detail'),
       name: 'userCreate',
-      meta: { title: 'userCreate', module: '用户' }
+      meta: { title: 'userCreate', module: '用户', crud: 'c' }
     }, {
       path: 'detail/:id(\\d+)',
       hidden: true,

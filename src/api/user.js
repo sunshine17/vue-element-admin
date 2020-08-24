@@ -16,7 +16,7 @@ export function getOne(id) {
   })
 }
 
-export function addOne(data) {
+export function create(data) {
   return request({
     url: '/api/user/add',
     method: 'post',

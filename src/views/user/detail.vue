@@ -4,10 +4,11 @@
       <el-row>
         <sticky :class-name="'sub-navbar '" style="background: #eef1f6;">
           <el-col :span="12" align="left" style="padding-left: 60px;"> {{ pageName }} </el-col>
-          <el-col :span="12" style="padding-right:40px;">
-            <el-button v-if="!readonly" v-loading="loading" style="margin-left: 10px;" type="success" size="small" @click="onSave"> 保存 </el-button>
-            <el-button v-if="!readonly" v-loading="loading" style="margin-left: 10px;" type="warning" size="small" @click="onCancel"> 返回 </el-button>
-            <el-button v-if="readonly" v-loading="loading" style="margin-left: 10px;" type="primary" size="small" @click="onEdit"> 编辑 </el-button>
+          <el-col :span="12" style="padding-right:72px;">
+            <el-button v-if="!isReadonly" v-loading="loading" class="pan-btn-min light-blue-btn" style="margin-left: 10px;" type="success" size="small" @click="onSave"> 保存 </el-button>
+            <el-button v-if="!isReadonly && !isNew" v-loading="loading" class="pan-btn-min yellow-btn" style="margin-left: 10px;" type="warning" size="small" @click="onCancel"> 返回 </el-button>
+            <el-button v-if="isNew && !isReadonly" v-loading="loading" class="pan-btn-min yellow-btn" style="margin-left: 10px;" type="warning" size="small" @click="onReset"> 重置 </el-button>
+            <el-button v-if="!isNew && isReadonly" v-loading="loading" class="pan-btn-min green-btn" style="margin-left: 10px;" type="primary" size="small" @click="onEdit"> 编辑 </el-button>
           </el-col>
         </sticky>
       </el-row>
@@ -15,25 +16,38 @@
         <div class="postInfo-container">
           <el-row>
             <el-col :span="12">
-              <el-form-item prop="name" class="form-items" label="用户名">
-                <el-input v-model="postForm.name" :maxlength="80" name="name" required :disabled="isReadonly"> Name </el-input>
+              <el-form-item prop="name" class="form-items" label="用户名" required>
+                <el-input v-model="postForm.name" :maxlength="80" name="name" :disabled="isReadonly"> Name </el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item prop="email" class="form-items" label="Email">
-                <el-input v-model="postForm.email" :maxlength="80" name="email" required :disabled="isReadonly"> Email </el-input>
+              <el-form-item
+                prop="email"
+                label="Email"
+                class="form-items"
+                :rules="[
+                  { required: true, trigger: 'blur' },
+                  { type: 'email', message: '请输入合法Email地址', trigger: ['blur', 'change'] }
+                ]"
+              >
+                <el-input v-model="postForm.email" :maxlength="80" name="email" :disabled="isReadonly"> Email </el-input>
+                <!--
+                <MDinput v-model="postForm.email" icon="el-icon-search" name="email" placeholder="输入Email" :disabled="isReadonly">
+                  Email
+                </MDinput>
+                -->
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item prop="passwd" class="form-items" label="密码">
-                <el-input v-model="postForm.passwd" :maxlength="80" name="passwd" required :disabled="isReadonly" show-password />
+              <el-form-item prop="passwd" class="form-items" label="密码" required>
+                <el-input v-model="postForm.passwd" :maxlength="80" name="passwd" :disabled="isReadonly" show-password />
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item prop="mobile" class="form-items" label="手机号">
-                <el-input v-model="postForm.mobile" :maxlength="80" name="mobile" required :disabled="isReadonly" />
+              <el-form-item prop="mobile" class="form-items" label="手机号" required>
+                <el-input v-model="postForm.mobile" :maxlength="80" name="mobile" :disabled="isReadonly" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -54,8 +68,8 @@
               <el-form-item prop="enabled" class="form-items" label="状态">
                 <el-switch
                   v-model="postForm.enabled"
-                  active-value="1"
-                  inactive-value="0"
+                  :active-value="1"
+                  :inactive-value="0"
                   active-color="#13ce66"
                   inactive-color="#ff4949"
                   :disabled="isReadonly"
@@ -73,9 +87,7 @@
 // import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
 
-// import { getOne, addOne, update } from '@/api/user'
-import { getOne, update } from '@/api/user'
-
+import { getOne, update, create } from '@/api/user'
 import store from '@/store'
 
 const defaultForm = {
@@ -84,24 +96,14 @@ const defaultForm = {
   name: '',
   email: '',
   id: undefined,
-  mobile: undefined,
-  platforms: ['a-platform'],
-  comment_disabled: false,
-  importance: 0
+  mobile: undefined
 }
 
 export default {
   name: 'ArticleDetail',
   // components: { MDinput, Sticky },
   components: { Sticky },
-
-  filters: {
-
-    enabledFilter(status) {
-      const statusMap = { 1: true, 0: false }
-      return statusMap[status]
-    }
-  },
+  filters: { },
   props: { },
 
   data() {
@@ -115,15 +117,27 @@ export default {
       } else {
         callback()
       }
+    } // validateRequire()
+
+    let readonly = true
+    let isNew = false
+    if (this.$route.meta.crud && this.$route.meta.crud === 'c') {
+      readonly = false
+      isNew = true
     }
+
     return {
       roleOpts: store.getters.usr.roleToSel,
       id: undefined,
-      readonly: true,
+      isNew: isNew,
+      readonly: readonly,
       postForm: Object.assign({}, defaultForm),
       loading: false,
       rules: {
         name: [{ validator: validateRequire }],
+        passwd: [{ validator: validateRequire }],
+        mobile: [{ validator: validateRequire }],
+        roles: [{ validator: validateRequire }],
         email: [{ validator: validateRequire }]
       },
       tempRoute: {}
@@ -134,6 +148,10 @@ export default {
       let name = this.$route.meta.module + '详情'
       if (this.id) {
         name += ` - ${this.id}`
+      }
+      if (this.isNew) {
+        // return '添加-' + this.$route.meta.module
+        return name + ' - 创建'
       }
       return name
     },
@@ -162,8 +180,12 @@ export default {
   }, // created()
 
   methods: {
-    loadRoleLst() {
-    }, // loadRoleLst()
+    onReset() {
+      if (this.readonly) {
+        return
+      }
+      this.postForm = Object.assign({}, defaultForm)
+    }, // onReset()
 
     toast(succ, msg = '未知错误') {
       const name = succ ? '成功' : '出错'
@@ -183,7 +205,7 @@ export default {
       getOne(this.id).then(response => {
         this.postForm = response.data
         this.postForm.roles = this.postForm.roles.map(x => x.id)
-        console.log(JSON.stringify(this.postForm))
+        console.log('>>> postForm: ' + JSON.stringify(this.postForm))
       }).catch(err => {
         console.log(err)
       }).finally(() => {
@@ -208,12 +230,20 @@ export default {
         this.loading = true
         const form = { ...this.postForm }
         const roleArr = []
-        form.roles.forEach(elem => roleArr.push(elem.id))
+        if (form.roles) {
+          form.roles.forEach(elem => roleArr.push(elem.id))
+        }
         form.roles = roleArr
-        update(form).then(res => {
+
+        const saveFunc = this.isNew ? create : update
+        saveFunc(form).then(res => {
           this.toast(true, res.msg)
           this.readonly = true
-          this.fetchData()
+          if (this.isNew) {
+            this.id = res.data.id
+          } else {
+            this.fetchData()
+          }
         }).catch(() => {
           this.readonly = false
         }).finally(() => {

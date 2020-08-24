@@ -41,10 +41,10 @@
   @include colorBtn($yellow)
 }
 
-.pan-btn {
+.pan-btn-min {
   font-size: 14px;
   color: #fff;
-  padding: 14px 36px;
+  // padding: 14px 36px;
   border-radius: 8px;
   border: none;
   outline: none;
@@ -80,6 +80,13 @@
     bottom: 0;
   }
 }
+
+.pan-btn {
+  @extend .pan-btn-min;
+  padding: 14px 36px;
+}
+
+
 
 .custom-button {
   display: inline-block;
