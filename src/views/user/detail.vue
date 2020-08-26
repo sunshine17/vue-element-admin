@@ -229,12 +229,6 @@ export default {
         }
         this.loading = true
         const form = { ...this.postForm }
-        const roleArr = []
-        if (form.roles) {
-          form.roles.forEach(elem => roleArr.push(elem.id))
-        }
-        form.roles = roleArr
-
         const saveFunc = this.isNew ? create : update
         saveFunc(form).then(res => {
           this.toast(true, res.msg)
