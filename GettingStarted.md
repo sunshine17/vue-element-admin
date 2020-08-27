@@ -6,63 +6,97 @@ Environment files:
 - .env.production
 
 
-### VUE_APP_BASE_API
+### Client-side config
+
+#### VUE_APP_BASE_API
 
 API server base URL(no path info), example value: 
-VUE_APP_BASE_API=http://yourdomain/api/
 
+```shell
+# Your api url will be like this(the "api" prefix will be 
+# added to your ajax call's url automatically): 
+# http://your_host:port/api/api_path
+VUE_APP_BASE_API='/api/'  
+```
 
-## API Server things
+### Back-end(API) Server config
 
-### Disable client-side dev mode
+#### Disable client-side dev mode
+
+This will disable client-side mock and use your real server side api instead.
+
+```shell
 API_MODE=1
 API_SERVER='http://localhost:9099'  // your api back-end server
+```
 
 
-### Auth setting
+## Specifications
+
+### Session authentication
 
 - use request header "X-Token" to authenticate client requests, it's value is a token issued by server when user login, the front-end js will store this token and append it to the request header in the subsequent api requests
 
 - token is store in COOKIE in client
 
+### Role and auth design(Both server-side and client-side implementation)
+Please refer another documentation for detail: "GettingStarted:RoleAndAuthDesign.md"
 
-### API: response data structure
+### API Specifications
+
+#### Response data structure
 
 ```
 {
-    code: 0,  // 0 for success
-    message: 'error message'
-    data: {}  // business data object if no error happens
+    code: 0,    // 0 for success, otherwise means error happened
+    msg: 'error message'  // it can be an object sometimes :)
+    data: {}    // business data object if no error happens
 }
 ```
 
-
-### API: status code definition
+### Response code definition
 
 - 0: everythings' fine;
 
-- 5xxxx: logic error;
-  - 50008: Illegal token; 
-  - 50012: Other clients logged in; 
-  - 50014: Token expired;
-  - 50008: Login failed, unable to get user details;
+- 4xx: valification error:
+  - FORBIDDEN: 401,
+  - TOKEN_ERR: 405,
+  - PARAMS_ERR: 402,
+  - VALIDATE_ERR: 422,
+  - REGISTER_PARAM_ERR: 421,
 
-- 60204: usr name or pwd wrong
+- 5xx: server side error:
+  - DB_ERR: 501,
 
-### APIs
+- 6xx: logical error; 
+  - USR_PWD_WRONG: 600,
+  - USR_TOKEN_ERR: 601,
+  - DUPLICATE_ERR: 610,
 
-- Auth module
+#### Basic API list
+
+- Auth module(login and logout)
   - /auth/login
   - /auth/logout
-  - /auth/info
+  - /auth/info  // we use this seperate api to get user info, instead of login
 
 User Info object: 
 ```
 {
-    name: 'user name', 
-    roles: ['role-1', 'role-2',], // TODO: need to refactor
-    introduction: 'user introduction',
-    avatar: 'img url',
+    id: '@increment',
+    name: '@first',
+    email: '@email',
+    enabled: '@integer(0, 1)',
+    passwd: '@string(8, 12)',
+    createdAt: '@datetime',
+    roles: [
+      {
+        id: 4343,
+        name: 'role-1'
+      }
+    ],
+    mobile: '137@natural(445343)',
+    channel: 0  // where the user came from 
 }
 ```
 

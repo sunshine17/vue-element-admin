@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'Vue Element Admin',
+  title: 'PCAuto运营后台2020-xxx',
 
   /**
    * @type {boolean} true | false
