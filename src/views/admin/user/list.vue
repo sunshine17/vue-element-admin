@@ -152,6 +152,10 @@ export default {
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
+      }).catch(err => {
+        console.error(err)
+      }).finally(() => {
+        this.listLoading = false
       })
     },
     handleFilter() {

@@ -16,38 +16,41 @@
         <div class="postInfo-container">
           <el-row>
             <el-col :span="12">
-              <el-form-item prop="name" class="form-items" label="用户名" required>
-                <el-input v-model="postForm.name" :maxlength="80" name="name" :disabled="isReadonly"> Name </el-input>
+              <el-form-item prop="name" class="form-items" required>
+                <MDinput v-model="postForm.name" :maxlength="80" name="name" :disabled="isReadonly"> 用户名 </MDinput>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item
                 prop="email"
-                label="Email"
                 class="form-items"
                 :rules="[
                   { required: true, trigger: 'blur' },
                   { type: 'email', message: '请输入合法Email地址', trigger: ['blur', 'change'] }
                 ]"
               >
-                <el-input v-model="postForm.email" :maxlength="80" name="email" :disabled="isReadonly"> Email </el-input>
                 <!--
+                <el-input v-model="postForm.email" :maxlength="80" name="email" :disabled="isReadonly"> Email </el-input>
+                -->
                 <MDinput v-model="postForm.email" icon="el-icon-search" name="email" placeholder="输入Email" :disabled="isReadonly">
                   Email
                 </MDinput>
-                -->
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item prop="passwd" class="form-items" label="密码" required>
-                <el-input v-model="postForm.passwd" :maxlength="80" name="passwd" :disabled="isReadonly" show-password />
+              <el-form-item prop="passwd" class="form-items" required>
+                <MDinput v-model="postForm.passwd" :maxlength="80" name="passwd" :disabled="isReadonly" show-password type="password">
+                  密码
+                </MDinput>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item prop="mobile" class="form-items" label="手机号" required>
-                <el-input v-model="postForm.mobile" :maxlength="80" name="mobile" :disabled="isReadonly" />
+              <el-form-item prop="mobile" class="form-items" required>
+                <MDinput v-model="postForm.mobile" :maxlength="80" name="mobile" :disabled="isReadonly">
+                  手机号
+                </MDinput>
               </el-form-item>
             </el-col>
           </el-row>
@@ -84,11 +87,12 @@
 </template>
 
 <script>
-// import MDinput from '@/components/MDinput'
+import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
 
 import { getOne, update, create } from '@/api/user'
 import store from '@/store'
+import { hex_md5 } from '@/utils/md5'
 
 const defaultForm = {
   passwd: '',
@@ -101,8 +105,7 @@ const defaultForm = {
 
 export default {
   name: 'ArticleDetail',
-  // components: { MDinput, Sticky },
-  components: { Sticky },
+  components: { MDinput, Sticky },
   filters: { },
   props: { },
 
@@ -230,6 +233,9 @@ export default {
         this.loading = true
         const form = { ...this.postForm }
         const saveFunc = this.isNew ? create : update
+        if (form.passwd.length !== 32) {
+          form.passwd = hex_md5(form.passwd)
+        }
         saveFunc(form).then(res => {
           this.toast(true, res.msg)
           this.readonly = true

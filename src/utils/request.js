@@ -3,6 +3,10 @@ import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
+// import { CODE_MAP } from '@/config/constants'
+//
+const CODE_MAP = require('@/config/code-map')
+
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
@@ -50,7 +54,7 @@ service.interceptors.response.use(
       console.error(res.msg)
       const msg = typeof res.msg === 'object' ? res.msg.message : msg
       Message({
-        message: '操作失败: ' + (msg || 'Error'),
+        message: '操作失败: ' + CODE_MAP[res.code] || 'Error',
         type: 'error',
         duration: 2000
       })
@@ -74,12 +78,18 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error) // for debug
+    console.log('===> err: ')
+    console.log(error)
+    let eMsg = error.message
+    if (error.response && error.response.status === 403) {
+      eMsg = '您无权限访问此页面'
+    }
     Message({
-      message: error.message,
+      message: eMsg,
       type: 'error',
       duration: 5 * 1000
     })
+    // this.$router.push({ name: 'Dashboard' })
     return Promise.reject(error)
   }
 )
