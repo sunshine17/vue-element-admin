@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getLst(query) {
   return request({
-    url: '/api/user/list',
+    url: '/user/list',
     method: 'get',
     params: query
   })
@@ -10,7 +10,7 @@ export function getLst(query) {
 
 export function getOne(id) {
   return request({
-    url: '/api/user/detail',
+    url: '/user/detail',
     method: 'get',
     params: { id }
   })
@@ -18,7 +18,7 @@ export function getOne(id) {
 
 export function create(data) {
   return request({
-    url: '/api/user/add',
+    url: '/user/add',
     method: 'post',
     data
   })
@@ -26,7 +26,7 @@ export function create(data) {
 
 export function update(data) {
   return request({
-    url: '/api/user/update',
+    url: '/user/update',
     method: 'post',
     data
   })
@@ -34,7 +34,7 @@ export function update(data) {
 
 export function del(data) {
   return request({
-    url: '/api/user/del',
+    url: '/user/del',
     method: 'post',
     data
   })
