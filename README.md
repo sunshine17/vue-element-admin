@@ -1,8 +1,6 @@
 ## Introduction
 
-[vue-element-admin](https://panjiachen.github.io/vue-element-admin) is a production-ready front-end solution for admin interfaces. It is based on [vue](https://github.com/vuejs/vue) and uses the UI Toolkit [element-ui](https://github.com/ElemeFE/element).
-
-**The current version is `v4.0+` build on `vue-cli`. If you find a problem, please put [issue](https://github.com/PanJiaChen/vue-element-admin/issues/new). If you want to use the old version , you can switch branch to [tag/3.11.0](https://github.com/PanJiaChen/vue-element-admin/tree/tag/3.11.0), it does not rely on `vue-cli`**
+This is a production-ready front-end solution for admin interfaces. It is based on [vue](https://github.com/vuejs/vue) and uses the UI Toolkit [element-ui](https://github.com/ElemeFE/element).
 
 **This project does not support low version browsers (e.g. IE). Please add polyfill by yourself.**
 
@@ -83,12 +81,6 @@ Understanding and learning this knowledge in advance will greatly help the use o
 ## Getting started
 
 ```bash
-# clone the project
-git clone -b i18n git@github.com:PanJiaChen/vue-element-admin.git
-
-# enter the project directory
-cd vue-element-admin
-
 # install dependency
 npm install
 
