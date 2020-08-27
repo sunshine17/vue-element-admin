@@ -63,7 +63,7 @@ module.exports = [{
     }
   }
 }, {
-  url: '/api/user/add',
+  url: '/api/user/create',
   type: 'post',
   response: _ => {
     return {

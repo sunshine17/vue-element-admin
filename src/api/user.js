@@ -18,7 +18,7 @@ export function getOne(id) {
 
 export function create(data) {
   return request({
-    url: '/user/add',
+    url: '/user/create',
     method: 'post',
     data
   })
@@ -32,10 +32,10 @@ export function update(data) {
   })
 }
 
-export function del(data) {
+export function del(id) {
   return request({
-    url: '/user/del',
-    method: 'post',
-    data
+    url: '/user/delete',
+    method: 'get',
+    params: { id }
   })
 }
